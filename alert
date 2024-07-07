@@ -1,1 +1,15 @@
-alert ip any any -> $HOME_NET any (msg:"GT SOC - Inbound connection from non-Brazil/Uruguay IP\"; geoip.country_code:! \"BR\"; geoip.country_code:! \"UY\"; sid:1000001; rev:1;)
+tcpdump -i "$INTERFACE" -n -c 1000 'ip' 2>/dev/null | awk '
+{
+    if ($1 ~ /^[0-9]/ && $3 ~ /^[0-9]/) {
+        split($3, src, ".")
+        split($5, dst, ".")
+        if (src[1] != "" && src[2] != "" && src[3] != "") {
+            print src[1] "." src[2] "." src[3] ".0/24"
+        }
+        if (dst[1] != "" && dst[2] != "" && dst[3] != "") {
+            gsub(":","",dst[1] "." dst[2] "." dst[3] ".0/24")
+            print dst[1] "." dst[2] "." dst[3] ".0/24"
+        }
+    }
+}' | sort | uniq -c | sort -nr
+echo "Subnets detected:"

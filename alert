@@ -1,3 +1,5 @@
+INTERFACE="ens224"  # Substitua pelo nome da sua interface de rede
+echo "Capturando pacotes na interface $INTERFACE..."
 tcpdump -i "$INTERFACE" -n -c 1000 'ip' 2>/dev/null | awk '
 {
     if ($1 ~ /^[0-9]/ && $3 ~ /^[0-9]/) {
@@ -7,9 +9,9 @@ tcpdump -i "$INTERFACE" -n -c 1000 'ip' 2>/dev/null | awk '
             print src[1] "." src[2] "." src[3] ".0/24"
         }
         if (dst[1] != "" && dst[2] != "" && dst[3] != "") {
-            gsub(":","",dst[1] "." dst[2] "." dst[3] ".0/24")
             print dst[1] "." dst[2] "." dst[3] ".0/24"
         }
     }
 }' | sort | uniq -c | sort -nr
+
 echo "Subnets detected:"

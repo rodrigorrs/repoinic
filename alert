@@ -1,1 +1,1 @@
-alert ip any any -> $HOME_NET any (msg:"GT SOC - Inbound connection from non-Brazil/Uruguay IP"; !geoip.country_code:"BR"; !geoip.country_code:"UY"; sid:1000001; rev:1;)
+alert ip any any -> $HOME_NET any (msg:"GT SOC - Inbound connection from non-Brazil/Uruguay IP\"; geoip.country_code:! \"BR\"; geoip.country_code:! \"UY\"; sid:1000001; rev:1;)
